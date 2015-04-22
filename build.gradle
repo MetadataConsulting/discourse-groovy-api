@@ -1,21 +1,19 @@
 apply plugin: 'groovy'
 
 group = "org.modelcatalogue"
-version = "0.1"
-description = "An awesome groovy library"
+version = "0.1-alpha1"
+description = "Groovy Discourse API"
 
 repositories {
     jcenter()
 }
 
-sourceSets {
-    main.groovy.srcDir 'src'
-    test.groovy.srcDir 'test'
-}
-
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.2.1'
-    testCompile 'junit:junit:4.10'
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.0'
+    testCompile 'junit:junit:4.12'
 }
 
 task wrapper(type: Wrapper) {
@@ -40,6 +38,14 @@ publishing {
     publications {
         groovyMaven(MavenPublication) {
             from components.java
+
+            artifact sourcesJar {
+                classifier "sources"
+            }
+
+            artifact javadocJar {
+                classifier "javadoc"
+            }
         }
     }
 }
@@ -55,14 +61,31 @@ bintray {
     def projectDescription = project.description
 
     pkg {
-        repo = 'maven' // or your repo name
+        repo = 'model-catalogue' // or your repo name
+        userOrg = 'metadata'
         name = projectName      // somehow project.* doesn't work in this closure
         desc = projectDescription
-        licenses = ['Apache-2.0']
+        licenses = ['MIT']
     }
     dryRun = true // whether to run this as dry-run, without deploying
 }
 
 String getPropertyOrUseDefault(String propertyName, String defaultValue) {
     hasProperty(propertyName) ? getProperty(propertyName) : defaultValue
+}
+
+// custom tasks for creating source/javadoc jars
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+// add javadoc/source jar tasks as artifacts
+artifacts {
+    archives sourcesJar, javadocJar
 }
