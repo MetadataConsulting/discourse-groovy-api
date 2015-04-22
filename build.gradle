@@ -17,7 +17,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.10'
+    gradleVersion = '2.3'
 }
 
 // code below this can be safely removed if you don't want publish library ever
@@ -27,12 +27,12 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
     }
 }
 
 apply plugin: 'maven-publish'
-apply plugin: 'bintray'
+apply plugin: 'com.jfrog.bintray'
 
 publishing {
     publications {
@@ -67,7 +67,7 @@ bintray {
         desc = projectDescription
         licenses = ['MIT']
     }
-    dryRun = true // whether to run this as dry-run, without deploying
+    // dryRun = true // whether to run this as dry-run, without deploying
 }
 
 String getPropertyOrUseDefault(String propertyName, String defaultValue) {
