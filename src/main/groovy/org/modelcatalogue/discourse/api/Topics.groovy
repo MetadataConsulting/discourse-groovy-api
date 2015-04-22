@@ -24,11 +24,11 @@ class Topics {
         discourse.getClient("/posts").post([body: params])
     }
 
-    def getLatestTopics(Map<String, String> params) {
+    def getLatestTopics(Map<String, String> params = [:]) {
         discourse.getClient("/latest.json").get(query: params)
     }
 
-    def getNewTopics(Map<String, String> params) {
+    def getNewTopics(Map<String, String> params = [:]) {
         discourse.getClient("/new.json").get(query: params)
     }
 
@@ -40,11 +40,11 @@ class Topics {
         discourse.getClient("/t/${topicId}.json").put(body: [topic_id: topicId, category_id: categoryId], contentType: 'application/json')
     }
 
-    def getTopic(Long id, Map<String, Object> params) {
+    def getTopic(Long id, Map<String, Object> params = [:]) {
         discourse.getClient("/t/${id}.json").get(query: params)
     }
 
-    def getTopicsBy(String username = discourse.username, Map<String, Object> params) {
+    def getTopicsBy(String username = discourse.username, Map<String, Object> params = [:]) {
         discourse.getClient("/topics/created-by/${username}.json").get(query: params)
     }
 

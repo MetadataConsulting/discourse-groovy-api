@@ -15,7 +15,6 @@ import org.modelcatalogue.discourse.api.Tags
 import org.modelcatalogue.discourse.api.Topics
 import org.modelcatalogue.discourse.api.Users
 import org.modelcatalogue.discourse.sso.SingleSignOn
-import org.modelcatalogue.discourse.sso.User
 
 
 class Discourse {
@@ -33,12 +32,12 @@ class Discourse {
         this.singleSignOnSecret = singleSignOnSecret
     }
 
-    static Discourse create(String discourseServerUrl, String apiKey, String singleSignOnSecret, String user = null) {
+    static Discourse create(String discourseServerUrl, String apiKey, String user, String singleSignOnSecret = null) {
         new Discourse(discourseServerUrl, apiKey, singleSignOnSecret, user)
     }
 
 
-    Discourse with(String user) {
+    Discourse user(String user) {
         new Discourse(this.discourseServerUrl, this.apiKey, this.singleSignOnSecret, user)
     }
 
@@ -49,7 +48,9 @@ class Discourse {
             uriBuilder.addQueryParam('api_username', username)
         }
         uriBuilder.path = path
-        new RESTClient(uriBuilder.toString())
+        RESTClient client = new RESTClient(uriBuilder.toString(), 'application/x-www-form-urlencoded')
+        client.handler.failure = { resp, data -> client.handler.success(resp, data) }
+        client
     }
 
     ApiKey getApiKey() {
