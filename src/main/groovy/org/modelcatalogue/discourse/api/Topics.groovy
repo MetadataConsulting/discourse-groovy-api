@@ -33,11 +33,11 @@ class Topics {
     }
 
     def renameTopic(Long topicId, String title) {
-        discourse.getClient("/t/${topicId}.json").put(body: [topic_id: topicId, title: title], contentType: 'application/json')
+        discourse.getClient("/t/${topicId}.json").put(body: [topic_id: topicId, title: title], requestContentType: 'application/json')
     }
 
     def recategorizeTopic(Long topicId, Long categoryId) {
-        discourse.getClient("/t/${topicId}.json").put(body: [topic_id: topicId, category_id: categoryId], contentType: 'application/json')
+        discourse.getClient("/t/${topicId}.json").put(body: [topic_id: topicId, category_id: categoryId], requestContentType: 'application/json')
     }
 
     def getTopic(Long id, Map<String, Object> params = [:]) {

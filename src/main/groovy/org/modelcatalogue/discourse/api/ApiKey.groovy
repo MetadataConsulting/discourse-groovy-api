@@ -27,11 +27,11 @@ class ApiKey {
     }
 
     def revokeApiKey(Long id) {
-        discourse.getClient("/admin/api/key").delete(body: [id: id])
+        discourse.getClient("/admin/api/key").delete(body: [id: id], requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def regenerateApiKey(Long id) {
-        discourse.getClient("/admin/api/key").put(body: [id: id])
+        discourse.getClient("/admin/api/key").put(body: [id: id], requestContentType: 'application/x-www-form-urlencoded')
     }
 
 }

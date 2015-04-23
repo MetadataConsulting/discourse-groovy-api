@@ -21,7 +21,7 @@ class Categories {
             args.parentCategoryId = parentCategoryId
         }
 
-        discourse.getClient("/categories").post([body: args])
+        discourse.getClient("/categories").post(body: args, requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def getCategories(Map<String, Object> params = [:]) {

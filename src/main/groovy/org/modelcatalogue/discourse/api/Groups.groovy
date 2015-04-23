@@ -13,7 +13,7 @@ class Groups {
     def createGroup(String name, boolean visible = true) {
         Map<String, Object> args = [name: name, visible: visible]
 
-        discourse.getClient("/admin/groups").post([body: args])
+        discourse.getClient("/admin/groups").post(body: args, requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def getGroups() {

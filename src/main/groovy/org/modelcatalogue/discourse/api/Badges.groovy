@@ -20,7 +20,7 @@ class Badges {
     }
 
     def grantUserBadge(Map<String, Object> params) {
-        discourse.getClient("/user_badges").post([body:params])
+        discourse.getClient("/user_badges").post(body:params, requestContentType: 'application/x-www-form-urlencoded')
     }
 
 }

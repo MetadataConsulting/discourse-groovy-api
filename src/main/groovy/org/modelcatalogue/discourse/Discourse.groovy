@@ -21,24 +21,34 @@ class Discourse {
 
     private final String apiKey
     private final String singleSignOnSecret
+    private final Closure builderConfiguration
 
     final String username
     final String discourseServerUrl
 
-    private Discourse(String discourseServerUrl, String apiKey, String singleSignOnSecret, String username) {
+    private Discourse(String discourseServerUrl, String apiKey, String singleSignOnSecret, String username, Closure builderConfiguration) {
         this.discourseServerUrl = discourseServerUrl
         this.apiKey = apiKey
         this.username = username
         this.singleSignOnSecret = singleSignOnSecret
+        this.builderConfiguration = builderConfiguration ?: {}
     }
 
-    static Discourse create(String discourseServerUrl, String apiKey, String user, String singleSignOnSecret = null) {
-        new Discourse(discourseServerUrl, apiKey, singleSignOnSecret, user)
+    static Discourse create(String discourseServerUrl, String apiKey, String user, String singleSignOnSecret, @DelegatesTo(RESTClient) Closure builderConfiguration = {}) {
+        new Discourse(discourseServerUrl, apiKey, singleSignOnSecret, user, builderConfiguration)
+    }
+
+    static Discourse create(String discourseServerUrl, String apiKey, String user, @DelegatesTo(RESTClient) Closure builderConfiguration = {}) {
+        new Discourse(discourseServerUrl, apiKey, null, user, builderConfiguration)
     }
 
 
     Discourse user(String user) {
-        new Discourse(this.discourseServerUrl, this.apiKey, this.singleSignOnSecret, user)
+        new Discourse(this.discourseServerUrl, this.apiKey, this.singleSignOnSecret, user, this.builderConfiguration)
+    }
+
+    Discourse configure(@DelegatesTo(RESTClient) Closure builderConfiguration) {
+        new Discourse(this.discourseServerUrl, this.apiKey, this.singleSignOnSecret, this.username, builderConfiguration)
     }
 
     RESTClient getClient(String path) {
@@ -48,8 +58,9 @@ class Discourse {
             uriBuilder.addQueryParam('api_username', username)
         }
         uriBuilder.path = path
-        RESTClient client = new RESTClient(uriBuilder.toString(), 'application/x-www-form-urlencoded')
+        RESTClient client = new RESTClient(uriBuilder.toString())
         client.handler.failure = { resp, data -> client.handler.success(resp, data) }
+        client.with builderConfiguration
         client
     }
 

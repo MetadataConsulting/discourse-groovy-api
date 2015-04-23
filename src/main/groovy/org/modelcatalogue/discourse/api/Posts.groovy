@@ -11,7 +11,7 @@ class Posts {
     }
 
     def createPost(Long topicId, String raw) {
-        discourse.getClient("/posts").post([body: [topic_id: topicId, raw: raw]])
+        discourse.getClient("/posts").post(body: [topic_id: topicId, raw: raw], requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def getPost(Long id, Long version = null) {
@@ -25,11 +25,11 @@ class Posts {
     }
 
     def wikifyPost(Long id) {
-        discourse.getClient("/posts/${id}/wiki").put(body: [wiki: true])
+        discourse.getClient("/posts/${id}/wiki").put(body: [wiki: true], requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def editPost(Long id, String raw) {
-        discourse.getClient("/posts/${id}").put(body: [raw: raw])
+        discourse.getClient("/posts/${id}").put(body: [raw: raw], requestContentType: 'application/x-www-form-urlencoded')
     }
 
 }

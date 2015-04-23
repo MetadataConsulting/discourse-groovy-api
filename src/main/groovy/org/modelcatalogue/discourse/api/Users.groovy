@@ -18,15 +18,15 @@ class Users {
         if (active != null) {
             params.active = active
         }
-        discourse.getClient("/users").post([body: params])
+        discourse.getClient("/users").post(body: params, requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def updateTrustLevel(Long id, String level){
-        discourse.getClient("/admin/users/$id/trust_level").put([body: [user_id: id, level: level]])
+        discourse.getClient("/admin/users/$id/trust_level").put(body: [user_id: id, level: level], requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def inviteAdmin(Map<String, Object> params = [:]) {
-        discourse.getClient("/admin/users/invite_admin").post([body: params])
+        discourse.getClient("/admin/users/invite_admin").post(body: params, requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def getUsers(String type) {
