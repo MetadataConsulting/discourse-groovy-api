@@ -1,7 +1,7 @@
 apply plugin: 'groovy'
 
 group = "org.modelcatalogue"
-version = "0.1-alpha2"
+version = "0.1-alpha3"
 description = "Groovy Discourse API"
 
 repositories {

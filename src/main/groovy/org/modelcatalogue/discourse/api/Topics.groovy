@@ -21,7 +21,7 @@ class Topics {
         if (autoTrack != null) {
             params.auto_track = autoTrack
         }
-        discourse.getClient("/posts").post([body: params])
+        discourse.getClient("/posts").post(body: params, requestContentType: 'application/x-www-form-urlencoded')
     }
 
     def getLatestTopics(Map<String, String> params = [:]) {
