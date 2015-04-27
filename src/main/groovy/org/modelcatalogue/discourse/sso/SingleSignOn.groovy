@@ -50,22 +50,10 @@ class SingleSignOn {
     }
 
     static prepareResponseParameters(String key, String nonce, User user) {
-        String urlEncode = nonce
-        + "&name=" + URLEncoder.encode(user.name, "UTF-8")
-        + "&username=" + URLEncoder.encode(user.username, "UTF-8")
-        + "&email=" + URLEncoder.encode(user.email, "UTF-8")
-        + "&external_id=" + URLEncoder.encode(user.externalId + "", "UTF-8");
+        String urlEncode = nonce + "&name=" + URLEncoder.encode(user.name, "UTF-8") + "&username=" + URLEncoder.encode(user.username, "UTF-8") + "&email=" + URLEncoder.encode(user.email, "UTF-8")+ "&external_id=" + URLEncoder.encode(user.externalId + "", "UTF-8");
         String urlBase64 = new String(Base64.encodeBase64(urlEncode.getBytes("UTF-8")));
-        int length = 0;
-        int maxLength = urlBase64.length();
-        final int STEP = 60;
-        String urlBase64Encode = "";
-        while (length < maxLength) {
-            urlBase64Encode += urlBase64.substring(length, length + STEP < maxLength ? length + STEP : maxLength) + "\n";
-            length += STEP;
-        }
 
-        [sso: URLEncoder.encode(urlBase64Encode, "UTF-8"), sig: checksum(key, urlBase64Encode)]
+        [sso: urlBase64, sig: checksum(key, urlBase64)]
     }
 
     static String checksum(String macKey, String macData) {

@@ -58,7 +58,7 @@ class Discourse {
             uriBuilder.addQueryParam('api_username', username)
         }
         uriBuilder.path = path
-        RESTClient client = new RESTClient(uriBuilder.toString())
+        RESTClient client = new RESTClient(uriBuilder.toString(), 'application/json')
         client.handler.failure = { resp, data -> client.handler.success(resp, data) }
         client.with builderConfiguration
         client

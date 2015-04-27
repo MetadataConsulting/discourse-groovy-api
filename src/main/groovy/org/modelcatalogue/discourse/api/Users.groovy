@@ -33,7 +33,7 @@ class Users {
         discourse.getClient("admin/users/list/${type}.json").get([:])
     }
 
-    def getUser(String username = discourse.username, Map<String, Object> params) {
+    def getUser(String username = discourse.username, Map<String, Object> params = [:]) {
         discourse.getClient("/users/${username}.json").get(query: params)
     }
 

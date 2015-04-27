@@ -10,10 +10,10 @@ class Topics {
         this.discourse = discourse
     }
 
-    def createTopic(String title, String raw, String categorySlug = null, Boolean skipValidations = null, Boolean autoTrack = null) {
+    def createTopic(String title, String raw, String categoryName = null, Boolean skipValidations = null, Boolean autoTrack = null) {
         Map<String, Object> params = [title: title, raw: raw]
-        if (categorySlug) {
-            params.category = categorySlug
+        if (categoryName != null) {
+            params.category = categoryName
         }
         if (skipValidations != null) {
             params.skip_validations = skipValidations

@@ -41,7 +41,23 @@ class Categories {
     }
 
     def getCategory(Long id) {
-        discourse.getClient("/c/${id}/show").get()
+        discourse.getClient("/c/${id}/show").get([:])
+    }
+
+    def getCategory(String name) {
+        def result = search name
+        if (result.status != 200) {
+            return null
+        }
+        def data = result.data.categories.find { it.name == name }
+        if (data) {
+            return getCategory(data.id as Long)
+        }
+        return null
+    }
+
+    def search(String term, Map<String, Object> options = [:]) {
+        discourse.search.search(term, 'category', options)
     }
 
 }
