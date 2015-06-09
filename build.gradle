@@ -1,8 +1,15 @@
 apply plugin: 'groovy'
+apply plugin: 'application'
 
 group = "org.modelcatalogue"
-version = "0.1-alpha7"
+version = "0.1-alpha8"
 description = "Groovy Discourse API"
+
+mainClassName = 'org.modelcatalogue.discourse.util.DelegatingMainClass'
+
+jar {
+    manifest { attributes 'Main-Class': 'org.modelcatalogue.discourse.util.DelegatingMainClass' }
+}
 
 repositories {
     jcenter()
@@ -88,4 +95,8 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 // add javadoc/source jar tasks as artifacts
 artifacts {
     archives sourcesJar, javadocJar
+}
+
+startScripts {
+    applicationName = 'discourse'
 }

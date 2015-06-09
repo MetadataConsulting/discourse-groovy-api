@@ -1,57 +1,87 @@
 package org.modelcatalogue.discourse
 
 import groovy.json.JsonOutput
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
+import org.modelcatalogue.discourse.api.Backups
+import org.modelcatalogue.discourse.util.DelegatingMainClass
 import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore
 class Sandbox extends Specification {
 
-    Discourse discourse = Discourse.create 'http://192.168.1.114', 'af9402ba45b8f4aff5a84bcdf6da85fc7548db746026c5095ed652d0f83fcd8b', 'discourse'
+    @Rule TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    @Ignore
-    def "get some posts"() {
-        def topic = discourse.posts.createPost(14, """
-            one two three four five six seven eight nine ten ${System.currentTimeMillis()}
-        """.stripIndent().trim())
+    Discourse discourse = Discourse.create 'http://discourse.metadataregistry.org.uk/', '7b6d51fd026e18e3d96a868501f4890d4cff87a6de5f4cfb26778685de534622', 'admin'
 
-        println JsonOutput.prettyPrint(JsonOutput.toJson(topic.data))
+
+    def "download latest backup"() {
+        File testFolder = temporaryFolder.newFolder('backup-tests')
+
+        File propFile = new File(testFolder, 'discourse.properties')
+        Properties props = new Properties()
+        props.setProperty('discourse.url', 'http://discourse.metadataregistry.org.uk/')
+        props.setProperty('discourse.key', 'xxx')
+        props.setProperty('discourse.user', 'admin')
+        propFile.withWriter {
+            props.store(it,  'Test properties file')
+        }
+
+        File bkpDir = new File(testFolder, 'backups')
+        bkpDir.mkdirs()
+
+        Backups.main(propFile.absolutePath, bkpDir.absolutePath)
 
         expect:
-        topic instanceof Reader
-        topic
-        topic.data instanceof Map
-        topic.status == 200
+        bkpDir.listFiles().size() == 1
+        bkpDir.listFiles()[0].name.endsWith('tar.gz')
+        bkpDir.listFiles()[0].size() > 100
+
     }
 
-    def "test searching"() {
-        def result = discourse.categories.getCategory('NHIC')
+    def "download latest backup (using delegating class)"() {
+        File testFolder = temporaryFolder.newFolder('backup-tests')
+
+        File propFile = new File(testFolder, 'discourse.properties')
+        Properties props = new Properties()
+        props.setProperty('discourse.url', 'http://discourse.metadataregistry.org.uk/')
+        props.setProperty('discourse.key', 'xxx')
+        props.setProperty('discourse.user', 'admin')
+        propFile.withWriter {
+            props.store(it,  'Test properties file')
+        }
+
+        File bkpDir = new File(testFolder, 'backups')
+        bkpDir.mkdirs()
+
+        DelegatingMainClass.main('backup', propFile.absolutePath, bkpDir.absolutePath)
+
+        expect:
+        bkpDir.listFiles().size() == 1
+        bkpDir.listFiles()[0].name.endsWith('tar.gz')
+
+    }
+
+    def "download backup"() {
+        def result = discourse.backups.backups
 
         println JsonOutput.prettyPrint(JsonOutput.toJson(result.data))
 
         expect:
         result
-    }
 
-    @Ignore
-    def "create topic with category"() {
-        def result = discourse.topics.createTopic(
-                "this is a cool title ${System.currentTimeMillis()}",
-                "this is ultracool post about nothing because I don't know what to write for ${System.currentTimeMillis()}",
-                "Catalogue Elements"
-        )
+        when:
 
-        expect:
-        result
-    }
+        File backupsDir = temporaryFolder.newFolder('discourse-backups')
+        backupsDir.mkdirs()
 
+        for (backup in result.data) {
+            def backupFile = discourse.backups.downloadBackup(backup.filename)
+            new File(backupsDir, backup.filename) << backupFile.data
+        }
 
-    @Ignore
-    def "verify user does not exist"() {
-        def result = discourse.users.getUser('otto_von_bahnhof')
-
-        println JsonOutput.prettyPrint(JsonOutput.toJson(result.data))
-
-        expect:
-        result.status == 404
+        then:
+        true
     }
 }
